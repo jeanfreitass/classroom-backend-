@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: Praticando API
+  description: Esta é uma pratica de API em Back End
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000/
+    description: Ambiente de desenvolvimento
+tags:
+  - produtos
+paths:
+  /produtos:
+    get: 
+      tags:
+      - produtos
+      responses:
+        200:
+          description: Uma lista de produtos
+          content: 
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ArrayOfProdutos'
+
+    post:
+      tags:
+      - produtos
+      description: Um JSON com dados do novo produto
+      content: 
+        application/json:
+          schema:
+            items:
+               $ref: '#/components/schemas/ArrayOfProdutos'
+      required: true
+      responses:
+        201:
+          description: Produto criado com sucesso
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProdutos'
+        422:
+          description: Nome e preço são obrigatórios
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProdutos'
+          
+  /produtos/{produtoId}:
+    get:
+      tags:
+        - produtos
+      parameters:
+        -in: path
+        name: produtoId
+        required: true
+        description: Id do produto a ser buscado
+      responses:
+        200:
+          description: Um JSON com os dados do produto encontrado
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProdutos'
+        404:
+          description:  Produto não encontrado
+    put:
+      tags:
+        - produtos
+      parameters:
+        -in: path
+        name: produtoId
+        required: true
+        description: Id do produto a ser buscado
+      requestBody:
+        required: true
+        description: Um JSON com dados do produto a atualizar
+        content:
+          aplication/json:
+            schema:
+              type: object 
+
+      responses:
+        200:
+          description: Um JSON com os dados do produto atualizado
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProdutos'
+        404:
+          description: Produto não encontrado
+        422:
+          description: Nome e preço são obrigatórios
+
+    delete:
+      tags:
+      - produtos
+      parameters:
+      - in : path
+        name: produtoId
+        required: true
+        description: Id do produto a ser buscado
+      responses:
+        204:
+          description: Produto removido com sucesso
+        404:
+          description: Produto não encontrado
+components:
+  schemas:
+    ArrayOfProdutos:
+      type: array
+      items: 
+        $ref: '#/components/schemas/Produto'
+    Produto:
+      type: object
+      properties:
+        id:
+          type: string
+        nome:
+          type: string
+        preco:
+          type: number
