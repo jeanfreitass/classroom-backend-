@@ -4,6 +4,11 @@ const logger = require("morgan");
 const tarefasRouter = require("./routes/tarefaRouter");
 const app = express();
 
+const cors = require("cors")
+
+app.use(cors({
+    origin: "http://localhost:3000/"
+}))
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
