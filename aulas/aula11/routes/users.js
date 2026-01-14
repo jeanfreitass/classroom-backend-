@@ -1,0 +1,48 @@
+const express = require('express');
+const { gerarToken, verificarToken, cifrarSenha, compararSenha } = require("../middlewares/auth")
+const Usuario = require("../models/userModel")
+
+const router = express.Router();
+
+router.post("/", (req , res)=>{
+  const {username, password} = req.body
+  const novoUsuario = Usuario.create({username, password: cifrarSenha(password)})
+  res.status(201).json(novoUsuario)
+
+})
+
+router.post('/login', async function(req, res, next) {
+  const {username, password} = req.body;
+  const usuarioAutenticado = await Usuario.findOne({username})
+  if (usuarioAutenticado && compararSenha(password, usuarioEncontrado.password)){
+    const payload = {
+      iss: "Minha API",
+      email: username,
+      nome: "Jean",
+      perfil: "admin"
+    };
+      try {
+      return res.json({ token: gerarToken(payload) });
+      } catch (err){
+      return res.status(500).json({ msg: err.message});
+      }
+  }
+
+  return res.status(401).json({msg: "Credenciais invalidas"});
+});
+
+router.post('/renovar', verificarToken, function (req,res){
+  try{
+    const payload = {
+      iss: req.payload.iss,
+      email: req.payload.email,
+      nome: req.payload.nome,
+      perfil: req.payload.perfil,
+    }
+    return res.json({ token: gerarToken(payload) });
+  } catch (err){
+  return res.status(500).json({ msg: err.message});
+  }
+})
+
+module.exports = router;
